@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace vuetifyjs_aspnetcore
+namespace Vuetify.AspNetCore
 {
     public class Program
     {

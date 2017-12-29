@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/vuetifyjs-aspnetcore.csproj"
+                "${workspaceFolder}/vuetify-aspnetcore.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

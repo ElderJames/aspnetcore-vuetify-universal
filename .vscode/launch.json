@@ -20,7 +20,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.0/vuetifyjs-aspnetcore.dll",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.0/vuetify-aspnetcore.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

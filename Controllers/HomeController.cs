@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Prerendering;
 
-namespace vuetifyjs_aspnetcore.Controllers
+namespace Vuetify.AspNetCore.Controllers
 {
     public class HomeController : Controller
     {

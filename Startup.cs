@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SpaServices.Prerendering;
 using Microsoft.AspNetCore.Http;
 
-namespace vuetifyjs_aspnetcore
+namespace Vuetify.AspNetCore
 {
     public class Startup
     {
