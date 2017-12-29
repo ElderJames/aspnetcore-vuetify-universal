@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{{ title }}</title>
+    <!-- <title>{{ title }}</title> -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <meta name="description" content="{{ description }}">
-    <meta name="keywords" content="{{ keywords }}">
+    <!-- <meta name="description" content="{{ description }}">
+    <meta name="keywords" content="{{ keywords }}"> -->
     <link rel="shortcut icon" href="/static/favicon.ico">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" crossorigin="anonymous">
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Inconsolata:300,400,700|Material+Icons' rel="stylesheet" type="text/css">
@@ -16,6 +16,7 @@
   <body>
     @RenderBody()
 
+    <script src="~/dist/manifest.js" asp-append-version="true"></script>
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
     @RenderSection("scripts", required: false)
     <!--vue-ssr-outlet-->

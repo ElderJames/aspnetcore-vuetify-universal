@@ -45,4 +45,12 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="CleanDist" AfterTargets="Clean">
+    <ItemGroup>
+      <FilesToDelete Include="wwwroot\dist\**" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <RemoveDir Directories="wwwroot\dist" />
+  </Target>
+
 </Project>

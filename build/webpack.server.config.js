@@ -10,7 +10,7 @@ const isProd = process.env.NODE_ENV === 'production'
 module.exports = merge(base, {
   target: 'node',
   devtool: '#source-map',
-  entry:{ 'server.bundle': './ClientApp/assets/entry-server.js'},
+  entry: { 'main-server': './ClientApp/assets/entry-server.js' },
   output: {
     path: path.join(__dirname, '../wwwroot/dist'),
     filename: '[name].js',

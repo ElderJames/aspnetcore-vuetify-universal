@@ -6,11 +6,11 @@ const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
 const path = require('path');
 
 const config = merge(base, {
-  entry:{ app: './ClientApp/assets/entry-client.js'},
+  entry: { app: './ClientApp/assets/entry-client.js' },
   output: {
     path: path.join(__dirname, '../wwwroot/dist'),
     filename: '[name].js',
-},
+  },
   plugins: [
     // strip dev-only code in Vue source
     new webpack.DefinePlugin({

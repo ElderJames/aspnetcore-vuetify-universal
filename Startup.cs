@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.SpaServices.Prerendering;
+using Microsoft.AspNetCore.Http;
 
 namespace vuetifyjs_aspnetcore
 {
@@ -22,6 +24,8 @@ namespace vuetifyjs_aspnetcore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddNodeServices();
+            services.AddSpaPrerenderer();
             services.AddMvc();
         }
 
@@ -47,7 +51,7 @@ namespace vuetifyjs_aspnetcore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "api/{controller=Home}/{action=Index}/{id?}");
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",

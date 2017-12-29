@@ -3,6 +3,8 @@ const webpack = require('webpack')
 const vueConfig = require('./vue-loader.config')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'
 const resolve = (file) => path.resolve(__dirname, file)
@@ -15,7 +17,7 @@ module.exports = {
     : '#cheap-module-source-map',
   output: {
     path: resolve('../wwwroot'),
-    publicPath: '/wwwroot/dist',
+    publicPath: '/dist',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js'
   },
@@ -74,7 +76,12 @@ plugins.push(
   new ExtractTextPlugin({
     filename: 'common.[chunkhash].css'
   }),
-  new FriendlyErrorsPlugin()
+  new FriendlyErrorsPlugin(),
+  new CopyWebpackPlugin([
+    {
+      from: 'ClientApp/static',
+      to: '../static'
+    }])
 )
 
 isProd && plugins.push(
