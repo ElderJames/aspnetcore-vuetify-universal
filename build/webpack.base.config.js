@@ -17,7 +17,7 @@ module.exports = {
     : '#cheap-module-source-map',
   output: {
     path: resolve('../wwwroot'),
-    publicPath: '/dist',
+    publicPath: '/dist/',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js'
   },
@@ -79,8 +79,8 @@ plugins.push(
   new FriendlyErrorsPlugin(),
   new CopyWebpackPlugin([
     {
-      from: 'ClientApp/static',
-      to: '../static'
+      from: 'ClientApp/static/',
+      to: '../static/'
     }])
 )
 
