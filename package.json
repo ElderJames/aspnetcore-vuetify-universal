@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "node server",
     "start": "node server",
-    "build": "npm run build:client && npm run build:server",
-    "build:client": "set NODE_ENV=production && webpack --config build/webpack.client.config.js --progress --hide-modules",
-    "build:server": "set NODE_ENV=production && webpack --config build/webpack.server.config.js --progress --hide-modules"
+    "build:dev": "npm run build:vendor && npm run build:webpack",
+    "build:webpack": "webpack --progress --color",
+    "build:prod": "npm run clean && npm run build:vendor -- --env.prod && npm run build:webpack -- --env.prod",
+    "build:vendor": "webpack --config webpack.config.vendor.js --progress --color",
+    "clean": "rimraf wwwroot/dist clientapp/dist"
   },
   "engines": {
     "node": ">=7.0",
@@ -67,10 +69,13 @@
     "vue-loader": "^13.5.0",
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "^2.5.9",
+    "to-string-loader": "^1.1.5",
     "webpack": "^3.8.1",
     "webpack-dev-middleware": "^1.12.2",
     "webpack-hot-middleware": "^2.21.0",
     "webpack-merge": "^4.1.1",
-    "webpack-node-externals": "^1.6.0"
+    "webpack-node-externals": "^1.6.0",
+    "awesome-typescript-loader": "^3.0.0",
+    "uglifyjs-webpack-plugin": "^1.1.5"
   }
 }
