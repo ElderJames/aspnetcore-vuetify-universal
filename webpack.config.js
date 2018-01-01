@@ -120,6 +120,10 @@ module.exports = (env) => {
             //     context: __dirname,
             //     manifest: require('./wwwroot/dist/vendor-manifest.json')
             // }),
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                'process.env.VUE_ENV': '"client"'
+            }),
            new VueSSRClientPlugin()
         ].concat(isDevBuild ? [
             // Plugins that apply in development builds only
@@ -154,6 +158,10 @@ module.exports = (env) => {
                 //     sourceType: 'commonjs2',
                 //     name: './vendor'
                 // }),
+                new webpack.DefinePlugin({
+                    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                    'process.env.VUE_ENV': '"server"'
+                }),
                 new VueSSRServerPlugin()
             ]
         });
