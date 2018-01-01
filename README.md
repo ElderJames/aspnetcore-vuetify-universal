@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="https://vuetifyjs.com" target="_blank"><img width="100"src="https://vuetifyjs.com/static/doc-images/logo.svg"></a>
+</p>
+
+
 # ASP.NET Core + Vuetify
 
 Hosting vuetify docs project with aspnetcore，support server-side-prerendering(ssr).
@@ -17,8 +22,11 @@ Demo: [Vuetify docs](https://vuetifyjs.com/)
  - node: 7.0 +
  - .NET Core SDK 2.0 +
 
-## 运行命令
+## 运行方式
 
-- `npm install`
-- `dotnet restore`
+1. .NET Core CLI （已配置自动执行安装npm包和构建）：
 - `dornet run`
+
+2. VS Core:
+
+调试运行 .NET Core Launch 配置项
