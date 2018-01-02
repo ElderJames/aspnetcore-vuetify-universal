@@ -17,10 +17,11 @@ namespace Vuetify.AspNetCore.Controllers
             this.prerenderer = prerenderer;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var html = await prerenderer.RenderToString("ClientApp/renderOnServer");
-            return Content(html.Html, "text/html; charset=UTF-8");
+            // var html = await prerenderer.RenderToString("ClientApp/renderOnServer");
+            // return Content(html.Html, "text/html; charset=UTF-8");
+            return View();
         }
 
         public IActionResult Error()
