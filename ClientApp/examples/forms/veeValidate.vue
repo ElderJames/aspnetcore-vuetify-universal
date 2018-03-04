@@ -18,7 +18,7 @@
       required
     ></v-text-field>
     <v-select
-      v-bind:items="items"
+      :items="items"
       v-model="select"
       label="Select"
       :error-messages="errors.collect('select')"
@@ -47,20 +47,40 @@
     $_veeValidate: {
       validator: 'new'
     },
-    data () {
-      return {
-        name: '',
-        email: '',
-        select: null,
-        items: [
-          'Item 1',
-          'Item 2',
-          'Item 3',
-          'Item 4'
-        ],
-        checkbox: null
+
+    data: () => ({
+      name: '',
+      email: '',
+      select: null,
+      items: [
+        'Item 1',
+        'Item 2',
+        'Item 3',
+        'Item 4'
+      ],
+      checkbox: null,
+      dictionary: {
+        attributes: {
+          email: 'E-mail Address'
+          // custom attributes
+        },
+        custom: {
+          name: {
+            required: () => 'Name can not be empty',
+            max: 'The name field may not be greater than 10 characters'
+            // custom messages
+          },
+          select: {
+             required: 'Select field is required'
+          }
+        }
       }
+    }),
+
+    mounted () {
+      this.$validator.localize('en', this.dictionary)
     },
+
     methods: {
       submit () {
         this.$validator.validateAll()
@@ -73,6 +93,5 @@
         this.$validator.reset()
       }
     }
-
   }
 </script>

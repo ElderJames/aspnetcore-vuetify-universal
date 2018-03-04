@@ -7,7 +7,7 @@
           span Vuetify
         ul
           li
-            a(href="https://vuetifyjs.com/vuetify/quick-start")
+            router-link(:to="{ name: 'getting-started/QuickStart' }")
               v-icon.hidden-sm-only(dark) fa-book
               span.hidden-sm-only  Documentation
               span.hidden-md-and-up.hidden-xs-only  Docs
@@ -36,8 +36,6 @@
         h5.title.mb-3 Sponsors
         ul
           li
-            a(href="https://www.browserstack.com/" target="_blank") BrowserStack
-          li
             a(href="https://www.cloudflare.com/" target="_blank") CloudFlare
 
       v-flex(xs12 sm6 md3).blue-grey.darken-3
@@ -58,6 +56,6 @@
 
 <script>
   export default {
-    name: 'home-footer'
+    name: 'HomeFooter'
   }
 </script>

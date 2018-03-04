@@ -1,5 +1,6 @@
 <template lang="pug">
   v-fab-transition
+    //- style="bottom: 52px"
     v-btn(
       fab
       dark
@@ -16,7 +17,7 @@
 
 <script>
   export default {
-    name: 'app-fab',
+    name: 'AppFab',
 
     data: () => ({
       fab: false
@@ -34,7 +35,7 @@
       },
       toTop () {
         this.$router.push({ hash: '' })
-        window.scrollTo(0, 0)
+        this.$vuetify.goTo(0)
       }
     }
   }

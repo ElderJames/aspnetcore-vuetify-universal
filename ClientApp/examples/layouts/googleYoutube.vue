@@ -43,18 +43,26 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar color="red" dense fixed clipped-left app>
-      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-        <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <v-icon class="ml-3">fa-youtube</v-icon>
+    <v-toolbar
+      color="red"
+      dense
+      fixed
+      clipped-left
+      app
+    >
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-icon class="mx-3">fa-youtube</v-icon>
+      <v-toolbar-title class="mr-5 align-center">
+        <span class="title">Youtube</span>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
       <v-layout row align-center style="max-width: 650px">
         <v-text-field
           placeholder="Search..."
           single-line
           append-icon="search"
           :append-icon-cb="() => {}"
-          class="white--text"
+          color="white"
           hide-details
         ></v-text-field>
       </v-layout>
@@ -62,12 +70,26 @@
     <v-content>
       <v-container fill-height>
         <v-layout justify-center align-center>
-          <v-tooltip right>
-            <v-btn icon large :href="source" target="_blank" slot="activator">
-              <v-icon large>code</v-icon>
-            </v-btn>
-            <span>Source</span>
-          </v-tooltip>
+          <v-flex shrink>
+            <v-tooltip right>
+              <v-btn
+                icon
+                large
+                :href="source"
+                target="_blank"
+                slot="activator"
+              >
+                <v-icon large>code</v-icon>
+              </v-btn>
+              <span>Source</span>
+            </v-tooltip>
+            <v-tooltip right>
+              <v-btn icon large href="https://codepen.io/johnjleider/pen/YeRKwQ" target="_blank" slot="activator">
+                <v-icon large>mdi-codepen</v-icon>
+              </v-btn>
+              <span>Codepen</span>
+            </v-tooltip>
+          </v-flex>
         </v-layout>
       </v-container>
     </v-content>
@@ -90,7 +112,7 @@
         { picture: 38, text: 'Apple' },
         { picture: 48, text: 'Xbox Ahoy' },
         { picture: 58, text: 'Nokia' },
-        { picture: 78, text: 'MKBHD' },
+        { picture: 78, text: 'MKBHD' }
       ]
     }),
     props: {
@@ -98,9 +120,3 @@
     }
   }
 </script>
-
-<style>
-  .input-group__details:after {
-    background-color: rgba(255, 255, 255, 0.32) !important;
-  }
-</style>

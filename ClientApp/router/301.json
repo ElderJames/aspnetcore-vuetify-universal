@@ -3,7 +3,6 @@
   "/quick-start": "/vuetify/quick-start",
   "/overview": "/guides/server-side-rendering",
   "/motion": "/motion/transitions",
-  "/event-bus": "/",
   "/components/sidebars": "/components/navigation-drawers",
   "/components/collapsible": "/components/expansion-panels",
   "/components/navbars": "/components/toolbars",
@@ -19,5 +18,6 @@
   "/vuetify/sponsors-and-backers": "/getting-started/sponsors-and-backers",
   "/vuetify/contributing": "/getting-started/contributing",
   "/vuetify/roadmap": "/getting-started/roadmap",
-  "/vuetify/a-la-carte": "/getting-started/a-la-carte"
+  "/vuetify/a-la-carte": "/getting-started/a-la-carte",
+  "/pre-made-themes": "/layout/pre-made-themes"
 }

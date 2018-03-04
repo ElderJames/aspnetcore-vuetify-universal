@@ -8,6 +8,8 @@
       ad
 
     v-alert(color="error" icon="warning" value).mb-4 In order for your application to work properly, you <strong>must</strong> wrap it in a <code>v-app</code> component. This component is used for dynamically managing your content area and is the mounting point for many components.
+    v-alert(color="info" icon="local_offer" value).mb-4
+      div The new <strong>Vuetify Store</strong> is now live <v-btn color="white" class="primary--text" href="https://next.vuetifyjs.com/store" target="_blank">Check it out! <v-icon>chevron_right</v-icon></v-btn>
     section#cdn-install
       section-header CDN Install
       section-text To test using Vuetify.js without installing a template from Vue CLI, copy the code below into your <code>index.html</code>. This will pull the latest version of Vue and Vuetify, allowing you to start playing with components. You can also use the <a href="https://template.vuetifyjs.com" target="_blank">Vuetify starter</a> on codepen.
@@ -225,14 +227,14 @@
           },
           {
             icon: 'web',
-            title: 'Webpack',
-            init: 'webpack',
+            title: 'Webpack Simple',
+            init: 'webpack-simple',
             desc: 'This template is intended for users who are already familiar with Vue/Webpack. It contains a very simple webpack setup and is targetted at developers creating prototype or basic applications.'
           },
           {
             icon: 'layers',
-            title: 'Webpack Advanced',
-            init: 'webpack-advanced',
+            title: 'Webpack',
+            init: 'webpack',
             desc: 'This template is intended for users who are looking for out of the box linting and unit testing.'
           },
           {

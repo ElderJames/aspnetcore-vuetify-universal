@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(:class="['markup', color]" v-bind:data-lang="lang").mb-3
+  div(:class="['markup', color]" :data-lang="lang").mb-3
     pre
       code(v-bind:class="lang" ref="markup")
         slot
@@ -24,25 +24,40 @@
   highlight.registerLanguage('js', highlightJS)
 
   export default {
-    name: 'markup',
-
-    data () {
-      return {
-        copied: false,
-        content: ''
-      }
-    },
+    name: 'Markup',
 
     props: {
       color: {
         type: String,
         default: 'grey lighten-3'
       },
-      lang: String,
+      lang: {
+        type: String,
+        default: ''
+      }
+    },
+
+    data () {
+      return {
+        copied: false,
+        content: '',
+        highlightAttempts: 0
+      }
     },
 
     mounted () {
-      highlight.highlightBlock(this.$refs.markup)
+      const cb = deadline => {
+        if (deadline.timeRemaining() < 33.3 && this.highlightAttempts < 3 && !deadline.didTimeout) {
+          ++this.highlightAttempts
+          requestIdleCallback(cb, { timeout: 250 })
+        } else {
+          highlight.highlightBlock(this.$refs.markup)
+        }
+      }
+
+      'requestIdleCallback' in window
+        ? window.requestIdleCallback(cb, { timeout: 500 })
+        : highlight.highlightBlock(this.$refs.markup)
     },
 
     methods: {
@@ -53,14 +68,14 @@
         document.execCommand('selectAll', false, null)
         this.copied = document.execCommand('copy')
         markup.removeAttribute('contenteditable')
-        setTimeout(() => this.copied = false, 2000)
+        setTimeout(() => { this.copied = false }, 2000)
       }
     }
   }
 </script>
 
 <style lang="stylus">
-  @import '../../../node_modules/vuetify/src/stylus/settings/_colors.styl'
+  @import '../../node_modules/vuetify/src/stylus/settings/_colors.styl'
 
   .markup
     font-size: 1.3rem

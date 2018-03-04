@@ -2,20 +2,26 @@
   v-navigation-drawer(
     app
     fixed
-    v-model="appDrawer"
-    :stateless="stateless"
+    v-model="inputValue"
+    :stateless="isFullscreen"
   )#app-drawer
     div.text-xs-center
-      div.diamond-sponsor-label Diamond Sponsors
+      div(v-text="$t('Vuetify.AppDrawer.diamondSponsors')").diamond-sponsor-label
       div(
         v-for="diamond in diamonds"
         :key="diamond.title"
       )
-        a(:href="diamond.href" target="_blank" rel="noopener")
+        a(
+          :href="diamond.href"
+          target="_blank"
+          rel="noopener"
+          @click="$ga.event('drawer sponsor click', 'click', diamond.title)"
+        )
           img.diamond-sponsor(
             :src="`/static/doc-images/${diamond.src}`"
             :alt="diamond.title"
           )
+      patreon-btn
     v-container(fluid)
       v-text-field(
         placeholder="Search"
@@ -31,10 +37,11 @@
       )
     div.py-3.text-xs-center
       a(
-        href="https://vuejobs.com/?utm_source=vuejobs&utm_medium=banner&utm_campaign=linking"
+        href="https://vuejobs.com/?utm_source=vuejobs&utm_medium=banner&utm_campaign=linking&ref=vuetifyjs.com"
         target="_blank"
         rel="noopener"
         class="d-inline-block"
+        @click="$ga.event('drawer jobs click', 'click', 'vuejobs')"
       )
         img(
           src="/static/doc-images/affiliates/vuejobs-logo.svg"
@@ -42,44 +49,47 @@
           title="VueJobs"
           width="30%"
         )
+
     v-list(dense expand)
       template(v-for="item in items")
+        <!--group with subitems-->
         v-list-group(
-          v-if="item.items"
-          :group="item.group"
-          :prepend-icon="item.icon"
+          v-if="item.items",
+          :group="item.group",
+          :prepend-icon="item.icon",
           no-action
         )
           v-list-tile(slot="activator" ripple)
             v-list-tile-content
               v-list-tile-title {{ item.title }}
           template(v-for="(subItem, i) in item.items")
+            <!--sub group-->
             v-list-group(
-              v-if="subItem.items"
-              :group="subItem.group"
+              v-if="subItem.items",
+              :group="subItem.group",
               sub-group
             )
               v-list-tile(slot="activator" ripple)
                 v-list-tile-content
                   v-list-tile-title {{ subItem.title }}
               v-list-tile(
-                v-for="(grand, i) in subItem.items"
-                :key="i"
-                :to="`${item.group}/${grand.href}`"
+                v-for="(grand, i) in subItem.items",
+                :key="i",
+                :to="genChildTarget(item, grand)",
+                :href="grand.href"
                 ripple
               )
                 v-list-tile-content
                   v-list-tile-title {{ grand.title }}
+            <!--child item-->
             v-list-tile(
-              :key="i"
-              v-bind="{ \
-                to: !subItem.target ? `${item.group}/${subItem.href}` : null, \
-                href: subItem.target && subItem.href \
-              }"
-              :disabled="subItem.disabled"
-              :target="subItem.target"
+              v-else,
+              :key="i",
+              :to="genChildTarget(item, subItem)",
+              :href="subItem.href",
+              :disabled="subItem.disabled",
+              :target="subItem.target",
               ripple
-              v-else
             )
               v-list-tile-content
                 v-list-tile-title
@@ -92,18 +102,19 @@
               ) {{ subItem.badge }}
               v-list-tile-action(v-if="subItem.action")
                 v-icon(:class="[subItem.actionClass || 'success--text']") {{ subItem.action }}
+
         v-subheader(v-else-if="item.header").grey--text {{ item.header }}
         v-divider(v-else-if="item.divider")
+
+        <!--top-level link-->
         v-list-tile(
-          v-bind="{ \
-            to: !item.target ? item.href : null, \
-            href: item.target && item.href \
-          }"
-          ripple
-          v-bind:disabled="item.disabled"
-          v-bind:target="item.target"
+          v-else,
+          :to="!item.href ? { name: item.name } : null",
+          :href="item.href",
+          ripple,
+          :disabled="item.disabled",
+          :target="item.target",
           rel="noopener"
-          v-else
         )
           v-list-tile-action(v-if="item.icon")
             v-icon {{ item.icon }}
@@ -112,7 +123,7 @@
           v-chip(
             v-if="item.badge"
             class="white--text pa-0 chip--x-small"
-            color="primary"
+            :color="item.color || 'primary'"
             disabled
           ) {{ item.badge }}
           v-list-tile-action(v-if="item.subAction")
@@ -126,45 +137,49 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  // Utilities
+  import { mapMutations, mapState } from 'vuex'
+  import supporters from '@/assets/supporters'
+  import appDrawerItems from '@/assets/app-drawer-items'
+  import { camel } from '@/util/helpers'
 
   export default {
     data: () => ({
+      diamonds: supporters.diamond,
       docSearch: {},
       isSearching: false,
+      items: appDrawerItems,
       search: ''
     }),
 
     computed: {
-      ...mapState({
-        diamonds: state => state.supporters.diamond,
-        items: state => state.appDrawerItems,
-        stateless: state => state.stateless
-      }),
-      appDrawer: {
+      ...mapState('app', ['isFullscreen', 'stateless', 'appDrawer']),
+      inputValue: {
         get (state) {
-          return this.$store.state.appDrawer
+          return this.appDrawer &&
+            !this.isFullscreen
         },
         set (val) {
-          this.$store.commit('app/DRAWER', val)
+          this.drawer(val)
         }
       }
     },
 
     watch: {
       $route () {
-        if(this.stateless &&
-          this.appDrawer &&
+        if (this.stateless &&
+          this.inputValue &&
           this.$vuetify.breakpoint.mdAndDown
-        ) this.appDrawer = false
+        ) this.inputValue = false
+      },
+      inputValue (val) {
+        if (!val) this.docSearch.autocomplete.autocomplete.close()
       },
       isSearching (val) {
         this.$refs.toolbar.isScrolling = !val
 
         if (val) {
-          this.$nextTick(() => {
-            this.$refs.search.focus()
-          })
+          this.$nextTick(() => this.$refs.search.focus())
         } else {
           this.search = null
         }
@@ -181,6 +196,22 @@
     },
 
     methods: {
+      ...mapMutations('app', {
+        drawer: 'DRAWER'
+      }),
+      genChildTarget (item, subItem) {
+        if (subItem.href) return
+        if (item.component) {
+          return {
+            name: item.component,
+            params: {
+              section: item.group,
+              component: subItem.name
+            }
+          }
+        }
+        return { name: `${item.group}/${camel(subItem.name)}` }
+      },
       init () {
         this.initDocSearch()
       },
@@ -205,16 +236,13 @@
             vm.$router.push(loc.pop())
           }
         })
-      },
-      toggleSidebar () {
-        this.$store.commit('vuetify/SIDEBAR', !this.$store.state.sidebar)
       }
     }
   }
 </script>
 
 <style lang="stylus">
-  @import '../../../node_modules/vuetify/src/stylus/settings/_elevations.styl'
+  @import '../../node_modules/vuetify/src/stylus/settings/_elevations.styl'
 
   .algolia-autocomplete
     flex: 1 1 auto
@@ -246,7 +274,7 @@
     .diamond-sponsor
       // todo trim down actual image file dimensions
       height: 35px
-      margin-bottom 1.25em
+      margin-bottom 0.25em
 
       aside.navigation-drawer ul li
         font-size 14px
@@ -254,6 +282,6 @@
 
       &-label
         color #676767
-        margin: 2em 0 1.5em
+        margin: 24px 0 16px 0
         font-size 13px
 </style>

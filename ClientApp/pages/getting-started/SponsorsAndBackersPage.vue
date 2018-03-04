@@ -6,7 +6,7 @@
         v-divider.mb-3
         v-list.transparent
           v-list-tile
-            v-list-tile-title 
+            v-list-tile-title
               strong {{ $t('GettingStarted.SponsorsAndBackers.backersSubHeader') }}
         v-container(fluid grid-list-md).mb-5
           v-layout(
@@ -21,11 +21,12 @@
               :title="backer.title"
               v-for="backer in diamond"
               v-bind:key="backer.title"
+              @click="$ga.event('backers page click', 'click', backer.title)"
             ).text-xs-center.mx-3
               img(
                 :src="`/static/doc-images/${backer.src}`"
                 :alt="backer.title"
-              )
+              ).supporter
 
         v-list.transparent
           v-list-tile(tag="div")
@@ -40,11 +41,12 @@
               :title="backer.title"
               v-for="backer in palladium"
               v-bind:key="backer.title"
+              @click="$ga.event('backers page click', 'click', backer.title)"
             ).text-xs-center.mx-3
               img(
                 :src="`/static/doc-images/${backer.src}`"
                 :alt="backer.title"
-              )
+              ).supporter
 
         v-list.transparent
           v-list-tile(tag="div")
@@ -64,12 +66,13 @@
               :title="backer.title"
               v-for="backer in gold"
               v-bind:key="backer.title"
+              @click="$ga.event('backers page click', 'click', backer.title)"
             ).text-xs-center.mx-3
               img(
                 :src="`/static/doc-images/${backer.src}`"
                 :alt="backer.title"
                 style="max-width: 150px;"
-              )
+              ).supporter
         section-head(value="GettingStarted.SponsorsAndBackers.affiliatesHeader")
         v-divider.mb-3
         v-container(fluid grid-list-md).mb-5.affiliates
@@ -86,12 +89,13 @@
               :title="affiliate.title"
               v-for="affiliate in affiliates"
               v-bind:key="affiliate.title"
+              @click="$ga.event('backers page click', 'click', affiliate.title)"
             ).text-xs-center.mx-3
               img(
                 :src="`/static/doc-images/${affiliate.src}`"
                 :alt="affiliate.title"
                 style="max-width: 150px;"
-              )
+              ).supporter
         section-head(value="GettingStarted.SponsorsAndBackers.sponsorsHeader")
         v-divider.mb-3
         v-container(fluid).mb-5
@@ -107,12 +111,13 @@
               :title="sponsor.title"
               v-for="sponsor in sponsors"
               v-bind:key="sponsor.title"
+              @click="$ga.event('backers page click', 'click', sponsor.title)"
             ).text-xs-center.mx-3
               img(
                 :src="`/static/doc-images/${sponsor.src}`"
                 alt="sponsor.title"
                 style="max-width: 150px;"
-              )
+              ).supporter
         div.text-xs-center
           div.mb-3 {{ $t('GettingStarted.SponsorsAndBackers.questionHeader') }}
           v-btn(
@@ -124,26 +129,24 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import supporters from '@/assets/supporters'
 
   export default {
-    computed: {
-      ...mapState({
-        diamond: state => state.supporters.diamond,
-        gold: state => state.supporters.gold,
-        palladium: state => state.supporters.palladium,
-        affiliates: state => state.supporters.affiliates,
-        sponsors: state => state.supporters.sponsors
-      })
-    }
+    data: () => ({
+      diamond: supporters.diamond,
+      gold: supporters.gold,
+      palladium: supporters.palladium,
+      affiliates: supporters.affiliates,
+      sponsors: supporters.sponsors
+    })
   }
 </script>
 
-<style lang="stylus">
-  #sponsors-and-backers
-    img
-      max-width: 225px
-      width: 100%
-    .affiliates img
+<style lang="stylus" scoped>
+  .supporter
+    max-width: 225px
+    width: 100%
+
+    .affiliates &
       width: 80%
 </style>

@@ -1,79 +1,83 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import VueAnalytics from 'vue-analytics'
+import paths from './paths'
 import scrollBehavior from './scroll-behavior'
 
 Vue.use(Router)
 
-// The meta data for your routes
-const meta = require('./meta.json')
+// language regex:
+// /^[a-z]{2,3}(?:-[a-zA-Z]{4})?(?:-[A-Z]{2,3})?$/
+// /^[a-z]{2,3}|[a-z]{2,3}-[a-zA-Z]{4}|[a-z]{2,3}-[A-Z]{2,3}$/
+const languageRegex = /^\/([a-z]{2,3}|[a-z]{2,3}-[a-zA-Z]{4}|[a-z]{2,3}-[A-Z]{2,3})(?:\/.*)?$/
+
 const release = process.env.RELEASE
 
-// Function to create routes
-// Is default lazy but can be changed
-function route (path, view) {
-  return {
-    path: path,
-    meta: meta[path],
-    component: () => import(
-      /* webpackChunkName: "routes" */
-      /* webpackMode: "lazy-once" */
-      `@/pages/${view}Page.vue`
-    )
-  }
+function getLanguageCookie () {
+  if (typeof document === 'undefined') return
+  return new Map(document.cookie.split('; ').map(c => c.split('='))).get('currentLanguage')
 }
 
-export function createRouter () {
-    const router = new Router({
-      base: release ? `/releases/${release}` : __dirname,
-      mode: release ? 'hash' : 'history',
-      scrollBehavior,
-      routes: [
-        route('/404', 'general/404'),
-        route('/', 'Home'),
-        // Getting Started
-        route('/getting-started/quick-start', 'getting-started/QuickStart'),
-        route('/getting-started/why-vuetify', 'getting-started/WhyVuetify'),
-        route('/getting-started/frequently-asked-questions', 'getting-started/FrequentlyAskedQuestions'),
-        route('/getting-started/sponsors-and-backers', 'getting-started/SponsorsAndBackers'),
-        route('/getting-started/contributing', 'getting-started/Contributing'),
-        route('/getting-started/roadmap', 'getting-started/Roadmap'),
-        // Application Layout
-        route('/layout/pre-defined', 'layout/PreDefined'),
-        route('/layout/spacing', 'layout/Spacing'),
-        route('/layout/alignment', 'layout/Alignment'),
-        route('/layout/display', 'layout/Display'),
-        route('/layout/elevation', 'layout/Elevation'),
-        route('/layout/sandbox', 'layout/Sandbox'),
-        // Base Styles
-        route('/style/colors', 'style/Colors'),
-        route('/style/theme', 'style/Theme'),
-        route('/style/typography', 'style/Typography'),
-        route('/style/content', 'style/Content'),
-        // Motion & Transitions
-        route('/motion/transitions', 'motion/Transitions'),
-        // Extra
-        route('/pre-made-themes', 'PremadeThemes'),
-        // Guides
-        route('/guides/server-side-rendering', 'guides/SSR'),
-        route('/guides/a-la-carte', 'guides/ALaCarte'),
-        // Additional resources
-        route('/theme-generator', 'ThemeGenerator'),
-        // Dynamic
-        route('/examples/:example+', 'examples/Example'),
-        route('/:section/:component', 'components/Doc'),
-        // Global redirect for 404
-        { path: '*', redirect: '/404' }
-      ]
-    })
+export function createRouter (store) {
+  function route (path, view, fullscreen, props) {
+    return {
+      path: path,
+      meta: { fullscreen },
+      name: view,
+      props,
+      component: () => import(
+        /* webpackChunkName: "routes" */
+        /* webpackMode: "lazy-once" */
+        `@/pages/${view}Page.vue`
+      )
+    }
+  }
 
-    // Send a pageview to Google Analytics
-    router.beforeEach((to, from, next) => {
-      if (typeof ga !== 'undefined' && process.env.NODE_ENV !== 'development') {
-        ga('set', 'page', to.path)
-        ga('send', 'pageview')
+  const routes = paths.map(path => {
+    return route(...path)
+  })
+
+  const router = new Router({
+    base: release ? `/releases/${release}` : __dirname,
+    mode: release ? 'hash' : 'history',
+    scrollBehavior,
+    routes: [
+      {
+        path: '/:lang([a-z]{2,3}|[a-z]{2,3}-[a-zA-Z]{4}|[a-z]{2,3}-[A-Z]{2,3})',
+        component: () => import(/* webpackChunkName: "routes" */'@/components/views/RootView.vue'),
+        props: route => ({ lang: route.params.lang }),
+        children: routes
+      },
+      {
+        path: '*',
+        redirect: to => {
+          let lang = getLanguageCookie() || 'en'
+          if (!languageRegex.test('/' + lang)) lang = 'en'
+          return `/${lang}${to.path}`
+        }
       }
-      next()
-    })
+    ]
+  })
 
-    return router
+  router.beforeEach((to, from, next) => {
+    if (to.meta.fullscreen || from.meta.fullscreen) {
+      store.commit('app/FULLSCREEN', !!to.meta.fullscreen)
+    }
+    next()
+  })
+
+  Vue.use(VueAnalytics, {
+    id: 'UA-75262397-3',
+    router,
+    autoTracking: {
+      page: process.env.NODE_ENV !== 'development'
+    },
+    debug: process.env.DEBUG ? {
+      enabled: true,
+      trace: false,
+      sendHitTask: true
+    } : false
+  })
+
+  return router
 }

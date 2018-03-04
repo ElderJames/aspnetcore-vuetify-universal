@@ -1,21 +1,12 @@
 <script>
-  import SSRBootable from '../../../node_modules/vuetify/src/mixins/ssr-bootable'
-
   export default {
-    name: 'app-table-of-contents',
-
-    mixins: [SSRBootable],
-
-    data: () => ({
-      currentOffset: 0,
-      position: 'relative',
-      right: 0,
-      top: 0,
-      list: []
-    }),
+    name: 'AppTableOfContents',
 
     props: {
-      discovery: Boolean,
+      discovery: {
+        type: Boolean,
+        default: false
+      },
       items: {
         type: Array,
         default: () => ([])
@@ -26,33 +17,24 @@
       }
     },
 
+    data: () => ({
+      currentOffset: 0,
+      position: 'relative',
+      right: 0,
+      top: 0,
+      list: [],
+      isBooted: false,
+      timeout: null
+    }),
+
     computed: {
       activeIndex () {
-        if (this.list.length < 2) return 0
+        const list = this.list.slice().reverse()
+        const index = list.findIndex(item => item.offsetTop - 100 < this.currentOffset)
 
-        const list = this.list.slice(1)
-        const offset = this.currentOffset
-        let activeIndex = 0
-        let prevItem = this.list[0]
-
-        list.forEach((item, i) => {
-          const distanceDiff = .1 * (item.offsetTop - prevItem.offsetTop)
-          const nextItem = list[i + 1]
-
-          if (!nextItem) {
-            if (offset >= item.offsetTop - distanceDiff) {
-              activeIndex = i + 1
-            }
-          } else if (offset >= item.offsetTop - distanceDiff &&
-            offset <= nextItem.offsetTop - distanceDiff
-          ) {
-            activeIndex = i + 1
-          }
-
-          prevItem = item
-        })
-
-        return activeIndex
+        return index > -1
+          ? list.length - 1 - index
+          : 0
       },
       styles () {
         return {
@@ -68,13 +50,21 @@
       }
     },
 
+    mounted () {
+      setTimeout(() => {
+        this.$el.setAttribute('data-booted', true)
+        this.isBooted = true
+      }, 200)
+    },
+
     methods: {
       genItem (item, index) {
         item = item || {}
         const isActive = this.activeIndex === index
+        const vm = this
 
         return this.$createElement('li', [
-          this.$createElement('router-link', {
+          this.$createElement('a', {
             staticClass: 'subheading mb-3 d-block',
             'class': {
               'primary--text': isActive,
@@ -83,11 +73,19 @@
             style: {
               borderLeft: `2px solid ${isActive ? this.$vuetify.theme.primary : 'transparent'}`
             },
-            props: {
-              to: { hash: `#${item.href}` }
-            },
-            domProps: {
-              innerText: item.text
+            props: { href: '#' },
+            domProps: { innerText: item.text },
+            on: {
+              click (e) {
+                e.stopPropagation()
+                e.preventDefault()
+
+                const goTo = index === 0
+                  ? 0
+                  : `#${item.href}`
+
+                vm.$vuetify.goTo(goTo)
+              }
             }
           })
         ])
@@ -98,14 +96,11 @@
         for (let item of this.items) {
           item = Object.assign({}, item)
 
-          const target = item.target
-            ? item.target
-            : document.getElementById(item.href)
+          const target = item.target ||
+            document.getElementById(item.href)
 
           if (target) {
-            const offsetTop = target.offsetTop
-
-            item.offsetTop = offsetTop
+            item.offsetTop = target.offsetTop
             item.target = target
 
             list.push(item)
@@ -115,14 +110,20 @@
         this.list = list
       },
       onScroll () {
+        clearTimeout(this.timeout)
+
         this.currentOffset = window.pageYOffset ||
-          document.documentElement.offsetTop
+        document.documentElement.offsetTop
 
         const shouldFloat = this.currentOffset >= this.threshold
 
-        this.position =  shouldFloat ? 'fixed' : 'relative'
+        this.position = shouldFloat ? 'fixed' : 'relative'
         this.top = shouldFloat ? 85 : 0
-        this.isBooted = true
+
+        this.timeout = setTimeout(() => {
+          requestAnimationFrame(this.genList)
+          this.isBooted = true
+        }, 100)
       }
     },
 
@@ -162,7 +163,7 @@
     list-style-type: none
     margin: 0 24px
     width: 200px
-    
+
     li > a
       padding-left: 18px
       text-decoration: none

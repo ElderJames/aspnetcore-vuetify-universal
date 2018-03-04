@@ -11,6 +11,8 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const template = fs.readFileSync(resolve('./assets/index.template.html'), 'utf-8')
 
+const availableLanguages = require('./i18n/languages').map(lang => lang.locale)
+
 function createRenderer(bundle, options) {
     // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
     return createBundleRenderer(bundle, Object.assign(options, {
@@ -44,7 +46,11 @@ module.exports = prerendering.createServerRenderer(function (params) {
     return new Promise(function (resolve, reject) {
         const context = params.data ? params.data : {
             title: params.baseUrl, // default title
-            url: params.url
+            url: params.url,
+            lang: 'zh-Hans',
+            hreflangs: availableLanguages.reduce((acc, lang) => {
+                return acc + `<link rel="alternate" hreflang="zh-Hans" href="https://${params.baseUrl}" />`
+            }, '')
         };
         bundleRenderer.renderToString(context, (err, resultHtml) => { // params.data is the store's initial state
             if (err) {

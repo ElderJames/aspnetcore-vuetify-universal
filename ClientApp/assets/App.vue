@@ -5,6 +5,7 @@
       app-toolbar
       app-view
       app-fab
+      app-snackbar
 
     div(v-else)#app
       router-view
@@ -13,6 +14,7 @@
 <script>
   import AppDrawer from '@/components/core/AppDrawer'
   import AppFab from '@/components/core/AppFab'
+  import AppSnackbar from '@/components/core/AppSnackbar'
   import AppToolbar from '@/components/core/AppToolbar'
   import AppView from '@/components/core/AppView'
   import Meta from '@/mixins/meta'
@@ -20,11 +22,12 @@
   import { mapState } from 'vuex'
 
   export default {
-    name: 'documentation',
+    name: 'Documentation',
 
     components: {
       AppDrawer,
       AppFab,
+      AppSnackbar,
       AppToolbar,
       AppView
     },
@@ -33,21 +36,11 @@
 
     computed: {
       ...mapState({
-        fullscreenRoutes: state => state.fullscreenRoutes
+        isFullscreen: state => state.isFullscreen
       }),
       examples () {
         return !!this.$route.params.example
       }
-    },
-
-    watch: {
-      $route (current, previous) {
-        this.setupLayout(200)
-      }
-    },
-
-    created () {
-      this.setupLayout()
     },
 
     mounted () {
@@ -61,29 +54,13 @@
         }).catch(err => {
           console.log(err)
         })
-      },
-      setupLayout (timeout = 300) {
-        const drawer = !this.fullscreenRoutes.includes(this.$route.path)
-        this.$store.commit('app/STATELESS', !drawer)
-
-        setTimeout(() => {
-          if (this.$route &&
-            this.$route.path !== '/' &&
-            this.$route.from &&
-            this.$route.from.path !== '/'
-          ) return
-
-          if (this.$vuetify.breakpoint.mdAndDown) return
-
-          this.$store.commit('app/DRAWER', drawer)
-        }, timeout)
       }
     }
   }
 </script>
 
 <style lang="stylus">
-  @import '../../node_modules/vuetify/src/stylus/settings/_elevations.styl'
+  @import '~vuetify/src/stylus/settings/_variables.styl'
 
   [v-cloak]
     display: none
@@ -93,11 +70,20 @@
 
   main
     section
-        &:before
-            content ''
-            display block
-            position relative
-            width 0
-            height 80px
-            margin-top -80px
+      &:before
+        content ''
+        display block
+        position relative
+        width 0
+        height 80px
+        margin-top -80px
+
+  .container.page
+    max-width: 1185px !important
+    padding-top: 75px
+    padding-bottom: 0
+    transition: .2s $transition.fast-out-slow-in
+
+    section
+      margin-bottom: 48px
 </style>

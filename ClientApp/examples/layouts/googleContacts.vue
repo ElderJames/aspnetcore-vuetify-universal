@@ -7,12 +7,12 @@
       v-model="drawer"
     >
       <v-list dense>
-        <template v-for="(item, i) in items">
+        <template v-for="item in items">
           <v-layout
             row
             v-if="item.heading"
             align-center
-            :key="i"
+            :key="item.heading"
           >
             <v-flex xs6>
               <v-subheader v-if="item.heading">
@@ -23,11 +23,14 @@
               <a href="#!" class="body-2 black--text">EDIT</a>
             </v-flex>
           </v-layout>
-          <v-list-group v-else-if="item.children" v-model="item.model" no-action>
-            <v-list-tile slot="item" @click="">
-              <v-list-tile-action>
-                <v-icon>{{ item.model ? item.icon : item['icon-alt'] }}</v-icon>
-              </v-list-tile-action>
+          <v-list-group
+            v-else-if="item.children"
+            v-model="item.model"
+            :key="item.text"
+            :prepend-icon="item.model ? item.icon : item['icon-alt']"
+            append-icon=""
+          >
+            <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>
                   {{ item.text }}
@@ -49,7 +52,7 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list-group>
-          <v-list-tile v-else @click="">
+          <v-list-tile v-else @click="" :key="item.text">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -74,9 +77,10 @@
         <span class="hidden-sm-and-down">Google Contacts</span>
       </v-toolbar-title>
       <v-text-field
-        solo
+        flat
+        solo-inverted
         prepend-icon="search"
-        placeholder="Search"
+        label="Search"
         class="hidden-sm-and-down"
       ></v-text-field>
       <v-spacer></v-spacer>
@@ -99,10 +103,22 @@
       <v-container fluid fill-height>
         <v-layout justify-center align-center>
           <v-tooltip right>
-            <v-btn icon large :href="source" target="_blank" slot="activator">
+            <v-btn
+              icon
+              large
+              :href="source"
+              target="_blank"
+              slot="activator"
+            >
               <v-icon large>code</v-icon>
             </v-btn>
             <span>Source</span>
+          </v-tooltip>
+          <v-tooltip right>
+            <v-btn icon large href="https://codepen.io/johnjleider/pen/EQOYVV" target="_blank" slot="activator">
+              <v-icon large>mdi-codepen</v-icon>
+            </v-btn>
+            <span>Codepen</span>
           </v-tooltip>
         </v-layout>
       </v-container>

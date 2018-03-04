@@ -4,6 +4,7 @@
 
 <script>
   import { camel } from '@/util/helpers'
+  import NotFound from '@/pages/general/404Page'
 
   export default {
     data: () => ({
@@ -12,8 +13,8 @@
 
     computed: {
       source () {
-        const path = this.$route.fullPath
-        return `https://github.com/vuetifyjs/vuetifyjs.com/blob/master${path}.vue`
+        const path = this.$route.path.split('/').slice(2).join('/')
+        return `https://github.com/vuetifyjs/vuetifyjs.com/blob/master/${path}.vue`
       }
     },
 
@@ -25,10 +26,8 @@
         /* webpackChunkName: "examples" */
         /* webpackMode: "lazy-once" */
         `../../examples/${example}.vue`
-      ).then(comp => {
-        next(vm => vm.component = comp.default)
-      }).catch(e => {
-        next('/')
+      ).catch(e => NotFound).then(comp => {
+        next(vm => { vm.component = comp.default })
       })
     }
   }
