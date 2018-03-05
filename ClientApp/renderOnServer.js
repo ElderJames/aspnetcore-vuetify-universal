@@ -45,7 +45,7 @@ let bundleRenderer = createRenderer(bundle, {
 module.exports = prerendering.createServerRenderer(function (params) {
     return new Promise(function (resolve, reject) {
         const context = params.data ? params.data : {
-            title: params.baseUrl, // default title
+            title: 'Vuetify', // default title
             url: params.url,
             lang: 'zh-Hans',
             hreflangs: availableLanguages.reduce((acc, lang) => {
